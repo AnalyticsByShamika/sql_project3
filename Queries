@@ -1,0 +1,81 @@
+Select 
+  sum(revenue) AS total_revenue,
+  sum(profit) AS total_profit,
+  count(*) AS total_orders,
+  sum(profit) / sum(revenue) * 100.00 AS profit_margin 
+From
+  orders
+
+Select
+  sport,
+roundsum(revenue), 2) AS total_revneue,
+roundsum(profit), 2) AS total_proftit,
+count(*) AS total_orders,
+sum(profit) / sum(revenue) * 100.00 AS profit_margin 
+FROM
+  orders
+GroupBy
+  Sport
+OrderBy
+  Profit_margin desc:
+
+Select
+  (select count (*) from orders where rating IS NOT NULL ) AS number_of_reviews,
+  roundavg(rating), 2) AS avg_rating 
+FROM
+  orders
+
+Select
+  rating,
+  sum(revenue) AS total_revenue,
+  sum(profit) AS total_profit
+FROM
+  orders
+WHERE
+  rating IS NOT NULL
+Groupby
+  rating
+Order By
+  rating
+
+
+(c= customer table , o = orders table)
+Select
+  c.state,
+row_number()over (order by sum( o.revenue) desc) AS reveneue_rank,
+sum(o.revenue) AS total_revenue,
+row_numer()over (order by sum( o.profit) desc) AS profit_rank,
+sum(o.profit) AS total_profit,
+row_number() over (order by sum( o.profit) / sum( o.revenue) * 100.0 desc) AS margin_rank,
+sum(o.profit) / sum (o.revenue) * 100.0 AS profit_margin
+FROM
+  orders.o
+JOIN
+  customers.o
+ON
+  o.customer_id = c.customer_id
+Groupby
+  c.state
+Order By
+  margin_rank
+
+
+CTE: with monthly_profit (
+Select
+  month(date) AS month,
+  sum(profit) AS total_profit
+FROM
+  orders
+Groupby
+  month(date) )
+Select
+  month,
+  total_profit,
+  lag(total_profit) over (order by month) AS previous_month_profit,
+  total_profit - lag(total_profit) over ( order by month) AS profit_difference
+FROM
+  monthly_profit
+Order By
+  month
+
+{lag shows the difference between each month}
